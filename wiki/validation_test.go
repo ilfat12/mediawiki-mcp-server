@@ -76,6 +76,11 @@ func TestNormalizePageTitle(t *testing.T) {
 		{"File namespace", "file:image.png", "File:Image.png"},
 		{"Already normalized", "Main Page", "Main Page"},
 		{"Mixed underscores and spaces", "test_page name", "Test page name"},
+		{"Cyrillic already capitalized", "Заглавная страница", "Заглавная страница"},
+		{"Cyrillic lowercase first letter", "заглавная страница", "Заглавная страница"},
+		{"Cyrillic with underscores", "заглавная_страница", "Заглавная страница"},
+		{"Cyrillic namespace prefix", "категория:тест", "Категория:Тест"},
+		{"Accented Latin first letter", "école", "École"},
 	}
 
 	for _, tt := range tests {
