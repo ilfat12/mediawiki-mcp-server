@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"unicode/utf8"
 
 	"golang.org/x/text/unicode/norm"
 )
@@ -87,17 +88,27 @@ func normalizePageTitle(title string) string {
 		rest := title[colonIdx+1:]
 
 		// Capitalize the namespace prefix
-		prefix = strings.ToUpper(string(prefix[0])) + prefix[1:]
+		prefix = capitalizeFirst(prefix)
 
 		// Capitalize the first letter after the colon
-		if len(rest) > 0 {
-			rest = strings.ToUpper(string(rest[0])) + rest[1:]
-		}
+		rest = capitalizeFirst(rest)
+
 		return prefix + ":" + rest
 	}
 
 	// No namespace prefix - capitalize first letter
-	return strings.ToUpper(string(title[0])) + title[1:]
+	return capitalizeFirst(title)
+}
+
+// capitalizeFirst uppercases the first rune of a non-empty string, leaving the
+// rest unchanged. It works on runes, not bytes, so multi-byte UTF-8 characters
+// (e.g. Cyrillic titles) are not mangled.
+func capitalizeFirst(s string) string {
+	if s == "" {
+		return s
+	}
+	r, size := utf8.DecodeRuneInString(s)
+	return strings.ToUpper(string(r)) + s[size:]
 }
 
 // HTML sanitization patterns for XSS prevention - optimized with combined regexes

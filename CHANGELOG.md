@@ -4,6 +4,9 @@ All notable changes to MediaWiki MCP Server are documented here.
 
 ## [Unreleased]
 
+### Fixed
+- **Non-ASCII page titles are no longer mangled by title normalization.** `normalizePageTitle` capitalized the first letter with `strings.ToUpper(string(title[0]))`, which slices the first *byte* of the string: for a multi-byte UTF-8 title such as `Заглавная страница` that leading byte (`0xD0`) turned into the standalone character `Ð` and left an orphaned continuation byte behind, so the corrupted title reached the API and `mediawiki_get_page`, `mediawiki_get_page_info`, `mediawiki_resolve_title`, `mediawiki_get_page_sections`, `mediawiki_get_page_images`, `mediawiki_get_related_pages` and `mediawiki_get_pages_batch` failed with "no revisions found for page". Capitalization now decodes the first rune (`utf8.DecodeRuneInString`) and uppercases it, which also gives correct Unicode casing for non-ASCII first letters (`école` → `École`, `заглавная страница` → `Заглавная страница`). Pure-ASCII titles and the namespace-prefix path behave exactly as before; `mediawiki_search` and `mediawiki_list_pages` never normalized the title and were never affected.
+
 ## [1.35.0] - 2026-10-07
 
 ### Added
