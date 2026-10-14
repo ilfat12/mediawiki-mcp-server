@@ -216,7 +216,7 @@ Tool: mediawiki_get_category_members (category="Deprecated")
 
 ```python
 # Release script
-1. mediawiki_bulk_replace(find="v6.7", replace="v6.8", category="Version-sensitive")
+1. mediawiki_bulk_replace(find="v6.7", replace="v6.8", category="Version-sensitive", preview=false)
 2. mediawiki_edit_page(title="Current Version", content="v6.8", preview=false)
 ```
 
